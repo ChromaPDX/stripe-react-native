@@ -1,4 +1,4 @@
-import Stripe
+import StripeApplePay
 
 enum ErrorType {
     static let Failed = "Failed"
@@ -55,31 +55,6 @@ class Errors {
             "declineCode": error?.userInfo[STPError.stripeDeclineCodeKey] ?? NSNull(),
             "stripeErrorCode": error?.userInfo[STPError.stripeErrorCodeKey] ?? NSNull(),
             "type": error?.userInfo[STPError.stripeErrorTypeKey] ?? NSNull(),
-        ]
-        
-        return ["error": value]
-    }
-    class func createError (_ code: String, _ error: STPSetupIntentLastSetupError?) -> NSDictionary {
-        let value: NSDictionary = [
-            "code": code,
-            "message": error?.message ?? NSNull(),
-            "localizedMessage": error?.message ?? NSNull(),
-            "declineCode": error?.declineCode ?? NSNull(),
-            "stripeErrorCode": error?.code ?? NSNull(),
-            "type": Mappers.mapFromSetupIntentLastPaymentErrorType(error?.type) ?? NSNull()
-        ]
-        
-        return ["error": value]
-    }
-    
-    class func createError (_ code: String, _ error: STPPaymentIntentLastPaymentError?) -> NSDictionary {
-        let value: NSDictionary = [
-            "code": code,
-            "message": error?.message ?? NSNull(),
-            "localizedMessage": error?.message ?? NSNull(),
-            "declineCode": error?.declineCode ?? NSNull(),
-            "stripeErrorCode": error?.code ?? NSNull(),
-            "type": Mappers.mapFromPaymentIntentLastPaymentErrorType(error?.type) ?? NSNull()
         ]
         
         return ["error": value]

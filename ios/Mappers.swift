@@ -1,4 +1,4 @@
-import Stripe
+import StripeApplePay
 
 class Mappers {
     class func createResult(_ key: String, _ value: NSDictionary?) -> NSDictionary {
@@ -25,56 +25,6 @@ class Mappers {
             }
         }
         return PKPaymentSummaryItemType.final
-    }
-
-    class func mapFromBankAccountHolderType(_ type: STPBankAccountHolderType?) -> String? {
-        if let type = type {
-            switch type {
-            case STPBankAccountHolderType.company: return "Company"
-            case STPBankAccountHolderType.individual: return "Individual"
-            default: return nil
-            }
-        }
-        return nil
-    }
-
-    class func mapToBankAccountHolderType(_ type: String?) -> STPBankAccountHolderType {
-        switch type {
-        case "Company": return STPBankAccountHolderType.company
-        case "Individual": return STPBankAccountHolderType.individual
-        default: return STPBankAccountHolderType.individual
-        }
-    }
-
-    class func mapFromBankAccountStatus(_ status: STPBankAccountStatus?) -> String? {
-        if let status = status {
-            switch status {
-            case STPBankAccountStatus.errored: return "Errored"
-            case STPBankAccountStatus.new: return "New"
-            case STPBankAccountStatus.validated: return "Validated"
-            case STPBankAccountStatus.verified: return "Verified"
-            case STPBankAccountStatus.verificationFailed: return "VerificationFailed"
-            default: return nil
-            }
-        }
-        return nil
-    }
-
-    class func mapFromBankAccount(_ bankAccount: STPBankAccount?) -> NSDictionary? {
-        if (bankAccount == nil) {
-            return nil
-        }
-        let result: NSDictionary = [
-            "id": bankAccount?.stripeID ?? NSNull(),
-            "bankName": bankAccount?.bankName ?? NSNull(),
-            "accountHolderName": bankAccount?.accountHolderName ?? NSNull(),
-            "accountHolderType": mapFromBankAccountHolderType(bankAccount?.accountHolderType) ?? NSNull(),
-            "country": bankAccount?.country ?? NSNull(),
-            "currency": bankAccount?.currency ?? NSNull(),
-            "routingNumber": bankAccount?.routingNumber ?? NSNull(),
-            "status": mapFromBankAccountStatus(bankAccount?.status) ?? NSNull(),
-        ]
-        return result
     }
 
     class func mapFromCard(_ card: STPCard?) -> NSDictionary? {
@@ -615,17 +565,6 @@ class Mappers {
             "fingerprint": paymentMethod.auBECSDebit?.fingerprint ?? NSNull(),
             "last4": paymentMethod.auBECSDebit?.last4 ?? NSNull()
         ]
-        let USBankAccount: NSDictionary = [
-            "routingNumber": paymentMethod.usBankAccount?.routingNumber ?? NSNull(),
-            "accountHolderType": mapFromUSBankAccountHolderType(type: paymentMethod.usBankAccount?.accountHolderType),
-            "accountType": mapFromUSBankAccountType(type: paymentMethod.usBankAccount?.accountType),
-            "last4": paymentMethod.usBankAccount?.last4 ?? NSNull(),
-            "bankName": paymentMethod.usBankAccount?.bankName ?? NSNull(),
-            "linkedAccount": paymentMethod.usBankAccount?.linkedAccount ?? NSNull(),
-            "fingerprint": paymentMethod.usBankAccount?.fingerprint ?? NSNull(),
-            "preferredNetworks": paymentMethod.usBankAccount?.networks?.preferred ?? NSNull(),
-            "supportedNetworks": paymentMethod.usBankAccount?.networks?.supported ?? NSNull(),
-        ]
         let method: NSDictionary = [
             "id": paymentMethod.stripeId,
             "paymentMethodType": Mappers.mapPaymentMethodType(type: paymentMethod.type),
@@ -648,8 +587,7 @@ class Mappers {
             ],
             "Upi": [
                 "vpa": paymentMethod.upi?.vpa
-            ],
-            "USBankAccount": USBankAccount
+            ]
         ]
         return method
     }
@@ -950,43 +888,5 @@ class Mappers {
             }
         }
         return .black
-    }
-
-    class func mapFromUSBankAccountHolderType(type: STPPaymentMethodUSBankAccountHolderType?) -> String {
-        if let type = type {
-            switch type {
-                case STPPaymentMethodUSBankAccountHolderType.company: return "Company"
-                case STPPaymentMethodUSBankAccountHolderType.individual: return "Individual"
-                case STPPaymentMethodUSBankAccountHolderType.unknown: return "Unknown"
-            }
-        }
-        return "Unknown"
-    }
-    
-    class func mapToUSBankAccountHolderType(type: String?) -> STPPaymentMethodUSBankAccountHolderType {
-        switch type {
-            case "Company": return STPPaymentMethodUSBankAccountHolderType.company
-            case "Individual": return STPPaymentMethodUSBankAccountHolderType.individual
-            default: return STPPaymentMethodUSBankAccountHolderType.individual
-        }
-    }
-
-    class func mapFromUSBankAccountType(type: STPPaymentMethodUSBankAccountType?) -> String {
-        if let type = type {
-            switch type {
-                case STPPaymentMethodUSBankAccountType.savings: return "Savings"
-                case STPPaymentMethodUSBankAccountType.checking: return "Checking"
-                case STPPaymentMethodUSBankAccountType.unknown: return "Unknown"
-            }
-        }
-        return "Unknown"
-    }
-    
-    class func mapToUSBankAccountType(type: String?) -> STPPaymentMethodUSBankAccountType {
-        switch type {
-            case "Savings": return STPPaymentMethodUSBankAccountType.savings
-            case "Checking": return STPPaymentMethodUSBankAccountType.checking
-            default: return STPPaymentMethodUSBankAccountType.checking
-        }
     }
 }
